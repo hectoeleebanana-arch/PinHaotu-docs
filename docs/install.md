@@ -31,7 +31,7 @@
 
 <div class="pinhaotu-highlight-box">
 
-**安装新版本后需重新填写 API key**（密钥仅存本机，不会随扩展保留）。
+安装新版本后需重新填写 API key（密钥仅存本机，不会随扩展保留）。
 
 </div>
 
