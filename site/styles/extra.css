@@ -1,0 +1,950 @@
+/*
+ * 三个导航由 extra.js 挂到 .md-header 下，#pinhaotu-header-tabs-wrap 相对整条 header 居中
+ */
+.md-header {
+  position: relative;
+}
+#pinhaotu-header-tabs-wrap {
+  pointer-events: auto;
+  transition: opacity 0.25s ease;
+}
+/* 搜索框展开时，三个导航渐隐消失，避免重叠 */
+body:has(#__search:checked) #pinhaotu-header-tabs-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+/* 三个导航：优先样式化主题自带的 .md-tabs__list，确保间距生效；克隆的 #pinhaotu-header-tabs 同步 */
+.md-tabs .md-tabs__list,
+#pinhaotu-header-tabs {
+  display: flex !important;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 0 !important;
+}
+.md-tabs .md-tabs__list a,
+#pinhaotu-header-tabs a {
+  padding: 0.1rem 0.2rem !important;
+  color: inherit;
+  text-decoration: none;
+}
+#pinhaotu-header-tabs a:hover {
+  text-decoration: underline;
+}
+#pinhaotu-header-tabs .md-tabs__item--active a {
+  font-weight: 600;
+}
+
+/* 图标+标题区右移：不移动 DOM，用 margin 实现，避免标题消失、搜索错位 */
+.md-header__inner > .md-header__button.md-logo {
+  margin-left: 30px;
+}
+.md-header__inner > label[for="__drawer"] {
+  margin-left: 10px;
+}
+.md-header__inner > .md-header__title {
+  margin-left: 0;
+}
+/* 日夜模式+搜索区右移 50px（只给 palette 加 margin，后面的搜索会一起靠右） */
+.md-header__inner > form[data-md-component="palette"],
+.md-header__inner > .md-header__option[data-md-component="palette"] {
+  margin-left: 50px;
+}
+/* 白天/夜间模式切换：使用自定义灯泡图标（palette 顺序为 slate 在前，故 __palette_0=夜间 __palette_1=白天） */
+[data-md-color-scheme="default"] [data-md-component="palette"] label[for="__palette_0"] .md-icon,
+[data-md-color-scheme="default"] [data-md-component="palette"] label[for="__palette_0"] svg {
+  display: none !important;
+}
+[data-md-color-scheme="default"] [data-md-component="palette"] label[for="__palette_0"] {
+  background: url("../assets/images/icon-palette-night.png") center/contain no-repeat;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+[data-md-color-scheme="slate"] [data-md-component="palette"] label[for="__palette_1"] .md-icon,
+[data-md-color-scheme="slate"] [data-md-component="palette"] label[for="__palette_1"] svg {
+  display: none !important;
+}
+[data-md-color-scheme="slate"] [data-md-component="palette"] label[for="__palette_1"] {
+  background: url("../assets/images/icon-palette-day.png") center/contain no-repeat;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+/* 搜索框高度减小：用 padding 与字号实现，避免 scaleY 导致图标和 placeholder 被横向拉伸；大圆角胶囊形 */
+.md-search__form {
+  padding-top: 0.2rem !important;
+  padding-bottom: 0.2rem !important;
+  border-radius: 9999px !important;
+  overflow: hidden;
+}
+.md-search__inner {
+  min-height: 1.6rem !important;
+  border-radius: 9999px !important;
+}
+.md-search__input {
+  font-size: 0.85rem !important;
+  padding-top: 0.15rem !important;
+  padding-bottom: 0.15rem !important;
+}
+.md-search__icon {
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+  flex-shrink: 0 !important;
+}
+.md-search__icon .md-icon {
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+  min-width: 1.2rem !important;
+  min-height: 1.2rem !important;
+}
+
+/* 白天模式：搜索框仅浅灰描边、无填色 */
+[data-md-color-scheme="default"] .md-search__form {
+  background-color: transparent !important;
+  border: 1px solid #d1d1d6 !important;
+  box-shadow: none !important;
+}
+[data-md-color-scheme="default"] .md-search__inner {
+  background-color: transparent !important;
+}
+[data-md-color-scheme="default"] .md-search__input {
+  background-color: transparent !important;
+  color: #1d1d1f !important;
+}
+[data-md-color-scheme="default"] .md-search__input::placeholder {
+  color: #8e8e93 !important;
+}
+
+/* 白天模式：搜索框内放大镜图标为浅灰色 */
+[data-md-color-scheme="default"] .md-search__icon,
+[data-md-color-scheme="default"] .md-search label.md-icon {
+  color: #8e8e93 !important;
+}
+[data-md-color-scheme="default"] .md-search__icon:hover,
+[data-md-color-scheme="default"] .md-search label.md-icon:hover {
+  color: #1d1d1f !important;
+}
+
+/* 展开搜索后：下方“键入以开始搜索”与搜索框间距 5px；仅下方区域宽度 95% 并居中，上方搜索框宽度不变 */
+body:has(#__search:checked) .md-search__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body:has(#__search:checked) .md-search__form {
+  align-self: stretch;
+  width: 100%;
+}
+body:has(#__search:checked) .md-search__output {
+  margin-top: 5px;
+  width: 95% !important;
+  max-width: 95%;
+  box-sizing: border-box;
+}
+
+/* 防止上方内容被遮挡：主内容区预留 header 高度，并保证整体居中、不被裁剪 */
+.md-main {
+  padding-top: 4.8rem;
+  padding-bottom: 100px;
+}
+/* 首页：“快速开始”及其以下内容整体下移（上外边距 264px + 10%） */
+.md-content__inner h2#_1 {
+  margin-top: 290px;
+  font-weight: 700 !important;
+}
+/* 首页：“快速开始”下的步骤列表居中排版、显示序号 */
+.md-content__inner h2#_1 + ol {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  list-style-position: inside;
+  padding-left: 0;
+}
+.md-content__inner h2#_1 + ol li {
+  list-style: decimal !important;
+  list-style-position: inside;
+  margin-bottom: 0.5rem;
+}
+/* 首页标题上方 logo 居中显示 */
+.pinhaotu-index-logo-wrap {
+  text-align: center;
+  margin-bottom: 1rem;
+  margin-top: 40px;
+}
+.pinhaotu-index-logo-wrap .pinhaotu-index-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 120px;
+  height: auto;
+}
+/* 首页：logo 下的标题“Pin好图”字号、加粗；白天黑字、夜间白字 */
+.pinhaotu-index-title,
+.md-content__inner .md-typeset h1.pinhaotu-index-title,
+.md-content__inner .md-typeset h1#pin {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+  -webkit-font-smoothing: antialiased;
+  margin-bottom: 0.6em !important;
+}
+[data-md-color-scheme="default"] .pinhaotu-index-title,
+[data-md-color-scheme="default"] .md-content__inner .md-typeset h1.pinhaotu-index-title,
+[data-md-color-scheme="default"] .md-content__inner .md-typeset h1#pin {
+  color: #1d1d1f !important;
+  -webkit-text-stroke: 0.5px #1d1d1f;
+  paint-order: stroke fill;
+}
+[data-md-color-scheme="slate"] .pinhaotu-index-title,
+[data-md-color-scheme="slate"] .md-content__inner .md-typeset h1.pinhaotu-index-title,
+[data-md-color-scheme="slate"] .md-content__inner .md-typeset h1#pin {
+  color: #ffffff !important;
+  -webkit-text-stroke: 0.5px #ffffff;
+  paint-order: stroke fill;
+}
+/* 首页：副标题“丢图上去...”加粗 */
+.md-content__inner .md-typeset h1#pin + p,
+.md-content__inner .md-typeset h1.pinhaotu-index-title + p {
+  font-weight: 700 !important;
+  text-shadow: 0 0 0 0.5px currentColor;
+}
+/* 首页：“下载插件”胶囊按钮 */
+.pinhaotu-index-download-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.pinhaotu-index-download-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+/* 首页：点击“下载插件”后显示的提示（浅灰小字 + 手动下载链接） */
+.pinhaotu-download-hint {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: 0.65em;
+  color: #888;
+}
+[data-md-color-scheme="slate"] .pinhaotu-download-hint {
+  color: #fff;
+}
+.pinhaotu-download-hint a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+.pinhaotu-download-hint a:hover {
+  color: #1d4ed8;
+}
+[data-md-color-scheme="slate"] .pinhaotu-download-hint a {
+  color: #93c5fd;
+}
+[data-md-color-scheme="slate"] .pinhaotu-download-hint a:hover {
+  color: #bfdbfe;
+}
+/* 强调框：浅蓝实色底、圆角（安装/使用教程等页），无描边，宽度与居中 */
+.md-content__inner .pinhaotu-highlight-box,
+article.md-typeset .pinhaotu-highlight-box {
+  background-color: #e3f2fd !important;
+  border: none !important;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.pinhaotu-highlight-box p {
+  margin: 0.25em 0;
+}
+.pinhaotu-highlight-box p:first-child {
+  margin-top: 0;
+}
+.pinhaotu-highlight-box p:last-child {
+  margin-bottom: 0;
+}
+[data-md-color-scheme="slate"] .md-content__inner .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] article.md-typeset .pinhaotu-highlight-box {
+  background-color: rgba(33, 150, 243, 0.52) !important;
+  border: none !important;
+}
+/* 安装教程页、使用教程页：蓝色框样式同步（确保两页一致） */
+body.pinhaotu-page-install .md-content__inner .pinhaotu-highlight-box,
+body.pinhaotu-page-install article.md-typeset .pinhaotu-highlight-box,
+body.pinhaotu-page-usage .md-content__inner .pinhaotu-highlight-box,
+body.pinhaotu-page-usage article.md-typeset .pinhaotu-highlight-box {
+  background-color: #e3f2fd !important;
+  border: none !important;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+[data-md-color-scheme="slate"] body.pinhaotu-page-install .md-content__inner .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] body.pinhaotu-page-install article.md-typeset .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] body.pinhaotu-page-usage .md-content__inner .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] body.pinhaotu-page-usage article.md-typeset .pinhaotu-highlight-box {
+  background-color: rgba(33, 150, 243, 0.52) !important;
+  border: none !important;
+}
+/* 首页：快速开始下方并排按钮（安装教程、使用教程） */
+.pinhaotu-index-btns-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 3rem;
+}
+[data-md-color-scheme="default"] .pinhaotu-index-download-btn {
+  background-color: #1d1d1f;
+  color: #ffffff;
+}
+[data-md-color-scheme="slate"] .pinhaotu-index-download-btn {
+  background-color: #f5f5f7;
+  color: #0A090C;
+}
+/* 仅描边、无填色（用于安装教程、使用教程） */
+.pinhaotu-index-btn-outline {
+  background-color: transparent !important;
+  border: 2px solid currentColor;
+}
+[data-md-color-scheme="default"] .pinhaotu-index-btn-outline {
+  border-color: #1d1d1f;
+  color: #1d1d1f;
+}
+[data-md-color-scheme="slate"] .pinhaotu-index-btn-outline {
+  border-color: #f5f5f7;
+  color: #f5f5f7;
+}
+/* 首页：“版本”标题字号 */
+.md-content__inner h2#_2 {
+  font-size: 1.3em !important;
+}
+/* 首页：从 GitHub 动态加载的版本块整体居中 */
+.pinhaotu-version-block {
+  text-align: center;
+  opacity: 0.5;
+}
+.pinhaotu-version-block h3.pinhaotu-version-h3 {
+  margin-bottom: 0.2em !important;
+}
+/* 首页：“v1.1.7 更新概要”字号 */
+.md-content__inner h3#v117,
+.pinhaotu-version-block h3.pinhaotu-version-h3 {
+  font-size: 1.0em !important;
+}
+/* 首页：“版本”区块内段落与列表字号：默认 0.6rem，随屏幕缩小 */
+.md-content__inner h2#_2 ~ p,
+.md-content__inner h2#_2 ~ ul,
+.md-content__inner h2#_2 ~ ul li,
+.pinhaotu-version-block p,
+.pinhaotu-version-block ul,
+.pinhaotu-version-block ul li {
+  font-size: 0.6rem !important;
+}
+/* 首页：“版本”区块内更新列表居中，后续改内容也保持居中 */
+.md-content__inner h2#_2 ~ ul,
+.pinhaotu-version-block ul {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  list-style-position: inside;
+  padding-left: 0;
+}
+.md-content__inner h2#_2 ~ ul li,
+.pinhaotu-version-block ul li {
+  list-style-position: inside;
+  display: list-item;
+  text-align: center;
+}
+@media screen and (max-width: 76.234375em) {
+  .md-content__inner h2#_2 ~ p,
+  .md-content__inner h2#_2 ~ ul,
+  .md-content__inner h2#_2 ~ ul li,
+  .pinhaotu-version-block p,
+  .pinhaotu-version-block ul,
+  .pinhaotu-version-block ul li {
+    font-size: 0.5rem !important;
+  }
+}
+@media screen and (max-width: 60em) {
+  .md-content__inner h2#_2 ~ p,
+  .md-content__inner h2#_2 ~ ul,
+  .md-content__inner h2#_2 ~ ul li,
+  .pinhaotu-version-block p,
+  .pinhaotu-version-block ul,
+  .pinhaotu-version-block ul li {
+    font-size: 0.45rem !important;
+  }
+}
+@media screen and (max-width: 44em) {
+  .md-content__inner h2#_2 ~ p,
+  .md-content__inner h2#_2 ~ ul,
+  .md-content__inner h2#_2 ~ ul li,
+  .pinhaotu-version-block p,
+  .pinhaotu-version-block ul,
+  .pinhaotu-version-block ul li {
+    font-size: 0.45rem !important;
+  }
+}
+.md-container {
+  overflow: visible;
+}
+.md-main__inner {
+  overflow: visible;
+}
+.md-content {
+  overflow: visible;
+}
+
+/* 下载插件页：隐藏左侧导航与右侧目录，正文居中占满可用宽度 */
+body.pinhaotu-page-download .md-sidebar--primary,
+body.pinhaotu-page-download .md-sidebar--secondary {
+  display: none !important;
+}
+body.pinhaotu-page-download .md-main__inner {
+  display: block !important;
+}
+body.pinhaotu-page-download .md-content {
+  max-width: 100%;
+}
+
+/* 安装教程页、使用教程页：隐藏左侧导航与右侧目录，正文占满（与下载页一致，无侧栏） */
+body.pinhaotu-page-install .md-sidebar--primary,
+body.pinhaotu-page-install .md-sidebar--secondary,
+body.pinhaotu-page-usage .md-sidebar--primary,
+body.pinhaotu-page-usage .md-sidebar--secondary {
+  display: none !important;
+}
+body.pinhaotu-page-install .md-main__inner,
+body.pinhaotu-page-usage .md-main__inner {
+  display: block !important;
+}
+body.pinhaotu-page-install .md-content,
+body.pinhaotu-page-usage .md-content {
+  max-width: 100%;
+}
+/* 安装/使用/下载页：内容块居中显示 */
+body.pinhaotu-page-install .md-content__inner,
+body.pinhaotu-page-usage .md-content__inner,
+body.pinhaotu-page-download .md-content__inner {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+body.pinhaotu-page-install .md-content__inner .md-typeset,
+body.pinhaotu-page-usage .md-content__inner .md-typeset,
+body.pinhaotu-page-download .md-content__inner .md-typeset {
+  text-align: center !important;
+}
+body.pinhaotu-page-install .md-content__inner .md-typeset p,
+body.pinhaotu-page-install .md-content__inner .md-typeset li,
+body.pinhaotu-page-install .md-content__inner .md-typeset h1,
+body.pinhaotu-page-install .md-content__inner .md-typeset h2,
+body.pinhaotu-page-install .md-content__inner .md-typeset h3,
+body.pinhaotu-page-install .md-content__inner .md-typeset h4,
+body.pinhaotu-page-install .md-content__inner .md-typeset .admonition,
+body.pinhaotu-page-install .md-content__inner .md-typeset table,
+body.pinhaotu-page-usage .md-content__inner .md-typeset p,
+body.pinhaotu-page-usage .md-content__inner .md-typeset li,
+body.pinhaotu-page-usage .md-content__inner .md-typeset h1,
+body.pinhaotu-page-usage .md-content__inner .md-typeset h2,
+body.pinhaotu-page-usage .md-content__inner .md-typeset h3,
+body.pinhaotu-page-usage .md-content__inner .md-typeset h4,
+body.pinhaotu-page-usage .md-content__inner .md-typeset .admonition,
+body.pinhaotu-page-usage .md-content__inner .md-typeset table,
+body.pinhaotu-page-download .md-content__inner .md-typeset p,
+body.pinhaotu-page-download .md-content__inner .md-typeset li,
+body.pinhaotu-page-download .md-content__inner .md-typeset h1,
+body.pinhaotu-page-download .md-content__inner .md-typeset h2,
+body.pinhaotu-page-download .md-content__inner .md-typeset h3,
+body.pinhaotu-page-download .md-content__inner .md-typeset h4,
+body.pinhaotu-page-download .md-content__inner .md-typeset .admonition,
+body.pinhaotu-page-download .md-content__inner .md-typeset table {
+  text-align: center !important;
+}
+/* 安装页、使用教程页：有序/无序列表整体居中 */
+body.pinhaotu-page-install .md-content__inner .md-typeset ol,
+body.pinhaotu-page-install .md-content__inner .md-typeset ul,
+body.pinhaotu-page-usage .md-content__inner .md-typeset ol,
+body.pinhaotu-page-usage .md-content__inner .md-typeset ul {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+}
+
+/* 下载插件页：标题仅作语义，不改变按钮样式 */
+body.pinhaotu-page-download .pinhaotu-download-page-title {
+  margin: 0 0 0.7rem 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+body.pinhaotu-page-download .pinhaotu-download-page-title .pinhaotu-index-download-btn {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  font-size: 1.15rem;
+}
+/* 下载插件页：按钮下方 logo 居中 */
+body.pinhaotu-page-download .pinhaotu-download-page-logo-wrap {
+  text-align: center;
+  margin-top: 1.8rem;
+  margin-bottom: 0.3rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.75rem;
+  border: 1px solid #d1d1d6;
+  border-radius: 1.25rem;
+  display: block;
+  box-sizing: border-box;
+  width: fit-content;
+}
+[data-md-color-scheme="slate"] body.pinhaotu-page-download .pinhaotu-download-page-logo-wrap {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+body.pinhaotu-page-download .pinhaotu-download-page-logo-wrap .pinhaotu-download-page-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 120px;
+  height: auto;
+}
+body.pinhaotu-page-download .pinhaotu-download-page-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 120px;
+  height: auto;
+}
+/* 下载插件页：获取方式及下方正文字号（article 上同时有 md-content__inner 与 md-typeset，需无空格选择） */
+body.pinhaotu-page-download article.md-content__inner.md-typeset {
+  font-size: 0.6rem;
+}
+body.pinhaotu-page-download article.md-content__inner.md-typeset ul,
+body.pinhaotu-page-download article.md-content__inner.md-typeset ul li,
+body.pinhaotu-page-download article.md-content__inner.md-typeset p {
+  font-size: 0.6rem !important;
+}
+/* 下载插件页：获取方式标题字号 */
+body.pinhaotu-page-download article.md-content__inner.md-typeset h2,
+body.pinhaotu-page-download .md-content__inner h2#_1 {
+  font-size: 1rem !important;
+}
+/* 下载插件页：获取方式与 logo 的间距缩小为约 30%（压掉 h2 默认上边距） */
+body.pinhaotu-page-download .pinhaotu-download-page-logo-wrap + h2,
+body.pinhaotu-page-download .md-content__inner h2#_1,
+body.pinhaotu-page-download article.md-content__inner.md-typeset h2:first-of-type {
+  margin-top: 3rem !important;
+  padding-top: 0 !important;
+}
+/* 下载插件页：获取方式两段文字居中显示 */
+body.pinhaotu-page-download article.md-content__inner.md-typeset h2,
+body.pinhaotu-page-download article.md-content__inner.md-typeset ul,
+body.pinhaotu-page-download article.md-content__inner.md-typeset ul li,
+body.pinhaotu-page-download article.md-content__inner.md-typeset p {
+  text-align: center;
+}
+body.pinhaotu-page-download article.md-content__inner.md-typeset ul {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  list-style-position: inside;
+  padding-left: 0;
+}
+
+/* 白天/夜晚切换时的渐变过渡 */
+html,
+body,
+.md-header,
+.md-header .md-header__inner,
+.md-tabs,
+.md-tabs a,
+.md-header a,
+.md-header .md-header__button,
+[data-md-component="palette"] .md-icon,
+[data-md-component="palette"] label .md-icon,
+.md-search__form,
+.md-search__input,
+.md-search__inner,
+.md-main,
+.md-content__inner,
+.md-sidebar,
+.md-dialog {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* 左侧目录与正文之间：浅灰分隔线，避免视觉重叠 */
+.md-sidebar--primary,
+.md-sidebar--secondary {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+/* 目录栏通高：仅拉长侧栏，不改变主区域高度 */
+.md-sidebar--primary,
+.md-sidebar--secondary {
+  align-self: stretch;
+}
+.md-sidebar--primary .md-sidebar__scrollwrap,
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+  overflow-x: hidden;
+  min-height: 0;
+}
+.md-sidebar--primary {
+  border-right: 1px solid #e0e0e0;
+  max-width: 100%;
+}
+.md-sidebar--primary .md-sidebar__scrollwrap {
+  padding-right: 0;
+}
+/* 目录栏与正文之间：浅灰分割线（主题默认目录在右用 border-left） */
+.md-sidebar--secondary {
+  border-left: 1px solid #e0e0e0;
+  max-width: 100%;
+}
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+  padding-left: 0;
+}
+[data-md-color-scheme="slate"] .md-sidebar--primary {
+  border-right-color: rgba(255, 255, 255, 0.12);
+}
+[data-md-color-scheme="slate"] .md-sidebar--secondary {
+  border-left-color: rgba(255, 255, 255, 0.12);
+}
+/* 正文区：允许在 grid 中收缩，避免与目录重叠 */
+.md-main__inner .md-content {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+/* 有侧栏时正文变窄（安装/使用教程等），用 !important 覆盖后面的通用 max-width */
+body:not(.pinhaotu-page-download) .md-main__inner .md-content .md-content__inner {
+  max-width: 38rem !important;
+}
+body:not(.pinhaotu-page-download) .md-content__inner .md-typeset {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* 白天：纯白背景 */
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #ffffff;
+  --md-primary-fg-color: #1d1d1f;
+  --md-primary-bg-color: #ffffff;
+  --md-default-fg-color--light: #1d1d1f;
+}
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-header .md-header__inner {
+  background-color: #ffffff !important;
+  color: #1d1d1f !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-md-color-scheme="default"] .md-tabs {
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-md-color-scheme="default"] .md-tabs a,
+[data-md-color-scheme="default"] .md-header a,
+[data-md-color-scheme="default"] .md-header .md-header__button {
+  color: #1d1d1f !important;
+}
+/* 白天模式：主题切换图标不要太深，用柔和灰 */
+[data-md-color-scheme="default"] [data-md-component="palette"] .md-icon,
+[data-md-color-scheme="default"] .md-header__option .md-icon {
+  color: #6b6b6b !important;
+}
+[data-md-color-scheme="default"] [data-md-component="palette"] label:hover .md-icon,
+[data-md-color-scheme="default"] .md-header__option label:hover .md-icon {
+  color: #1d1d1f !important;
+}
+
+/* 夜晚：与插件界面一致 #0A090C，并设背景图随滚动 */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #0A090C;
+  --md-primary-fg-color: #f5f5f7;
+  --md-primary-bg-color: #0A090C;
+}
+[data-md-color-scheme="slate"] html,
+[data-md-color-scheme="slate"] body {
+  min-height: 100vh;
+}
+[data-md-color-scheme="slate"] body {
+  position: relative;
+  background-color: #0A090C;
+}
+/* 夜晚模式背景图由 javascripts/night-bg.js 注入（base64），此处不再重复 */
+/* 隐藏首页中用于触发复制的背景图，避免占位或影响布局 */
+.md-content img[alt="night-bg"] {
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+[data-md-color-scheme="slate"] .md-main,
+[data-md-color-scheme="slate"] .md-main__inner,
+[data-md-color-scheme="slate"] .md-main .md-content__inner,
+[data-md-color-scheme="slate"] .md-content,
+[data-md-color-scheme="slate"] .md-content__inner,
+[data-md-color-scheme="slate"] .md-sidebar--primary,
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__scrollwrap,
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__inner,
+[data-md-color-scheme="slate"] .md-sidebar--secondary,
+[data-md-color-scheme="slate"] .md-sidebar--secondary .md-sidebar__scrollwrap,
+[data-md-color-scheme="slate"] .md-sidebar--secondary .md-sidebar__inner,
+[data-md-color-scheme="slate"] .md-footer {
+  background-color: transparent !important;
+}
+
+/* 夜间模式：蓝色强调框不随主区透明，保持可见蓝色（写在透明规则后以确保覆盖） */
+[data-md-color-scheme="slate"] .md-content__inner .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] article.md-typeset .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] body.pinhaotu-page-install .pinhaotu-highlight-box,
+[data-md-color-scheme="slate"] body.pinhaotu-page-usage .pinhaotu-highlight-box {
+  background-color: rgba(33, 150, 243, 0.52) !important;
+  border: none !important;
+}
+
+/* 白天模式：页脚 “Made with Material for MkDocs” 白底、深灰字 */
+[data-md-color-scheme="default"] .md-footer,
+[data-md-color-scheme="default"] .md-footer-meta {
+  background-color: #ffffff !important;
+  color: #4a4a4a !important;
+}
+[data-md-color-scheme="default"] .md-footer-meta a,
+[data-md-color-scheme="default"] .md-footer-meta .md-footer__link {
+  color: #4a4a4a !important;
+}
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-header .md-header__inner {
+  background-color: #0A090C !important;
+  color: #f5f5f7 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #0A090C !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-md-color-scheme="slate"] .md-tabs a,
+[data-md-color-scheme="slate"] .md-header a,
+[data-md-color-scheme="slate"] .md-header .md-header__button {
+  color: #f5f5f7 !important;
+}
+
+/* 夜晚模式：搜索框 icon 可见 */
+[data-md-color-scheme="slate"] .md-search__icon,
+[data-md-color-scheme="slate"] .md-search label.md-icon {
+  color: #aeaeb2 !important;
+}
+[data-md-color-scheme="slate"] .md-search__icon:hover,
+[data-md-color-scheme="slate"] .md-search label.md-icon:hover {
+  color: #f5f5f7 !important;
+}
+
+/* 夜晚模式：搜索框更亮、易辨认 */
+[data-md-color-scheme="slate"] .md-search__form {
+  background-color: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+}
+[data-md-color-scheme="slate"] .md-search__input {
+  background-color: transparent !important;
+  color: #f5f5f7 !important;
+}
+[data-md-color-scheme="slate"] .md-search__input::placeholder {
+  color: #8e8e93 !important;
+}
+[data-md-color-scheme="slate"] .md-search__inner {
+  background-color: #0A090C !important;
+}
+
+/* 页面正文内容居中（不含 header），白天夜晚均适用 */
+.md-content__inner {
+  text-align: center;
+  max-width: 52rem;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+/* 大屏/最大化：放宽主题 grid 与正文宽度，避免两侧大片空白 */
+@media (min-width: 60rem) {
+  .md-main__inner.md-grid {
+    max-width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .md-content__inner {
+    max-width: 65rem;
+  }
+  body:not(.pinhaotu-page-download) .md-main__inner .md-content .md-content__inner {
+    max-width: 40rem !important;
+  }
+}
+@media (min-width: 76rem) {
+  .md-content__inner {
+    max-width: 75rem;
+  }
+  body:not(.pinhaotu-page-download) .md-main__inner .md-content .md-content__inner {
+    max-width: 44rem !important;
+  }
+}
+@media (min-width: 96rem) {
+  .md-content__inner {
+    max-width: min(92vw, 100rem) !important;
+  }
+  body:not(.pinhaotu-page-download) .md-main__inner .md-content .md-content__inner {
+    max-width: 48rem !important;
+  }
+}
+.md-content__inner .md-typeset {
+  text-align: center;
+}
+.md-content__inner .md-typeset p,
+.md-content__inner .md-typeset li,
+.md-content__inner .md-typeset h1,
+.md-content__inner .md-typeset h2,
+.md-content__inner .md-typeset h3,
+.md-content__inner .md-typeset h4,
+.md-content__inner .md-typeset .admonition,
+.md-content__inner .md-typeset table {
+  text-align: center;
+}
+/* 列表、表格整体居中，彻底去掉每行前面的点（项目符号） */
+/* 正文区：.md-content > article.md-content__inner.md-typeset 内的 ul/ol */
+.md-content .md-content__inner.md-typeset ul,
+.md-content .md-content__inner.md-typeset ol,
+.md-content__inner .md-typeset ul,
+.md-content__inner .md-typeset ol {
+  display: inline-block;
+  text-align: left;
+  list-style: none !important;
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  padding-inline-start: 0 !important;
+}
+.md-content .md-content__inner.md-typeset ul li,
+.md-content .md-content__inner.md-typeset ol li,
+.md-content__inner .md-typeset ul li,
+.md-content__inner .md-typeset ol li {
+  list-style: none !important;
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  padding-inline-start: 0 !important;
+}
+.md-content .md-content__inner.md-typeset ul li::marker,
+.md-content .md-content__inner.md-typeset ol li::marker,
+.md-content__inner .md-typeset ul li::marker,
+.md-content__inner .md-typeset ol li::marker {
+  content: none !important;
+  display: none !important;
+  font-size: 0 !important;
+  width: 0 !important;
+}
+/* 主题或浏览器用 ::before 画圆点，一并隐藏 */
+.md-content .md-content__inner.md-typeset ul li::before,
+.md-content .md-content__inner.md-typeset ol li::before,
+.md-content__inner .md-typeset ul li::before,
+.md-content__inner .md-typeset ol li::before,
+.md-typeset ul li::before,
+.md-typeset ol li::before {
+  display: none !important;
+  content: none !important;
+  visibility: hidden !important;
+}
+.md-content__inner .md-typeset table {
+  margin-left: auto;
+  margin-right: auto;
+}
+.md-content__inner .md-typeset pre,
+.md-content__inner .md-typeset .highlight {
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 安装教程页、使用教程页：在全局列表样式之后再次强制居中，确保覆盖 */
+body.pinhaotu-page-install .md-content .md-content__inner,
+body.pinhaotu-page-install .md-content__inner,
+body.pinhaotu-page-usage .md-content .md-content__inner,
+body.pinhaotu-page-usage .md-content__inner {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset,
+body.pinhaotu-page-install .md-content__inner .md-typeset,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset,
+body.pinhaotu-page-usage .md-content__inner .md-typeset {
+  text-align: center !important;
+}
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset p,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset li,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset h1,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset h2,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset h3,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset h4,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset h5,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset h6,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset .admonition,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset table,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset .pinhaotu-highlight-box,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset p,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset li,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset h1,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset h2,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset h3,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset h4,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset h5,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset h6,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset .admonition,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset table,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset .pinhaotu-highlight-box {
+  text-align: center !important;
+}
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset ol,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset ul,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset ol,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset ul {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+  padding-left: 0 !important;
+}
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset ol li,
+body.pinhaotu-page-install .md-content .md-content__inner.md-typeset ul li,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset ol li,
+body.pinhaotu-page-usage .md-content .md-content__inner.md-typeset ul li {
+  text-align: center !important;
+}
+
+/* 夜间模式蓝色框：用 html/body 限定并放在文件末尾，确保覆盖白天样式 */
+html[data-md-color-scheme="slate"] .md-content__inner .pinhaotu-highlight-box,
+html[data-md-color-scheme="slate"] article.md-typeset .pinhaotu-highlight-box,
+html[data-md-color-scheme="slate"] body.pinhaotu-page-install .md-content__inner .pinhaotu-highlight-box,
+html[data-md-color-scheme="slate"] body.pinhaotu-page-install article.md-typeset .pinhaotu-highlight-box,
+html[data-md-color-scheme="slate"] body.pinhaotu-page-usage .md-content__inner .pinhaotu-highlight-box,
+html[data-md-color-scheme="slate"] body.pinhaotu-page-usage article.md-typeset .pinhaotu-highlight-box,
+body[data-md-color-scheme="slate"] .md-content__inner .pinhaotu-highlight-box,
+body[data-md-color-scheme="slate"] article.md-typeset .pinhaotu-highlight-box,
+body[data-md-color-scheme="slate"].pinhaotu-page-install .md-content__inner .pinhaotu-highlight-box,
+body[data-md-color-scheme="slate"].pinhaotu-page-install article.md-typeset .pinhaotu-highlight-box,
+body[data-md-color-scheme="slate"].pinhaotu-page-usage .md-content__inner .pinhaotu-highlight-box,
+body[data-md-color-scheme="slate"].pinhaotu-page-usage article.md-typeset .pinhaotu-highlight-box {
+  background-color: rgba(33, 150, 243, 0.52) !important;
+  border: none !important;
+}

@@ -1,0 +1,53 @@
+site_name: Pin好图
+site_description: Pin好图 - 用参考图在 Pinterest 搜相似图
+# 部署到 GitHub Pages 后，把下面三行取消注释并改成你的用户名和仓库名，即可得到正确站内链接与 sitemap
+# site_url: https://你的用户名.github.io/PinHaotu-docs/
+# repo_url: https://github.com/你的用户名/PinHaotu-docs
+# repo_name: 你的用户名/PinHaotu-docs
+
+theme:
+  name: material
+  language: zh
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
+  palette:
+    - scheme: slate
+      primary: grey
+      accent: grey
+      toggle:
+        icon: material/weather-sunny
+        name: 浅色模式
+    - scheme: default
+      primary: grey
+      accent: grey
+      toggle:
+        icon: material/weather-night
+        name: 深色模式
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+
+extra_css:
+  - styles/extra.css
+extra_javascript:
+  - javascripts/extra.js
+  - javascripts/night-bg.js
+
+nav:
+  - 下载插件: download.md
+  - 安装教程: install.md
+  - 使用教程: usage.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - admonition
+  - tables
