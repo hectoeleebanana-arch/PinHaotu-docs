@@ -29,6 +29,11 @@
 1. 解压新发布包，用其中的「Extension」文件夹覆盖原安装位置下的同名文件夹（或先删除旧 Extension，再放入新解压的 Extension 到同一路径）。
 2. 打开 `chrome://extensions/` 或 `edge://extensions/`，找到 Pin好图，点击扩展卡片上的「刷新」图标即可生效。
 
+**如何找到已安装插件的位置（更新前需确认 Extension 所在路径）**
+
+- **Chrome**：打开 `chrome://extensions/`，开启右上角「开发者模式」，找到 Pin好图，点击「详细信息」。在详情页中查看是否显示「来源」或加载路径（如“从以下位置加载：file:///...”）。若未显示路径，请回忆首次「加载已解压的扩展程序」时选择的文件夹（即包含 manifest.json 的 Extension 所在位置）。
+- **Edge**：打开 `edge://extensions/`，开启左侧底部「开发人员模式」，找到 Pin好图，点击「详细信息」。在详情页中查看是否显示加载路径。若未显示，请回忆首次「加载解压缩的扩展」时选择的文件夹位置。
+
 <div class="pinhaotu-highlight-box">
 
 按上述方式更新时，已保存的 API key 会保留，无需重新输入。
