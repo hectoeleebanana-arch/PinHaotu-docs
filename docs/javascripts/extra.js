@@ -233,6 +233,30 @@ function bindIndexDownloadBtn() {
   if (pageBtn) bindDownloadBtn(pageBtn, "pinhaotu-download-hint-page");
 }
 
+/* 让 header 中的「Pin好图」标题点击跳转回首页 */
+function makeHeaderTitleLinkToHome(root) {
+  if (!root) {
+    var path = (window.location.pathname || "").replace(/^\//, "").split("/").filter(Boolean);
+    var depth = Math.max(0, path.length - 1);
+    root = depth === 0 ? "." : Array(depth).fill("..").join("/");
+  }
+  var titleBlock = document.querySelector(".md-header__title .md-header__ellipsis > .md-header__topic:first-child");
+  if (!titleBlock) return;
+  var existing = titleBlock.querySelector("a.pinhaotu-header-home-link");
+  if (existing) {
+    existing.setAttribute("href", root);
+    return;
+  }
+  var span = titleBlock.querySelector(".md-ellipsis");
+  if (!span) return;
+  var a = document.createElement("a");
+  a.href = root;
+  a.className = "pinhaotu-header-home-link";
+  a.style.cssText = "color:inherit;text-decoration:none;cursor:pointer;";
+  while (titleBlock.firstChild) a.appendChild(titleBlock.firstChild);
+  titleBlock.appendChild(a);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   injectHeaderTabs();
   injectHeaderTabsStyle();
@@ -250,6 +274,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (logo && logo.tagName === "A") logo.setAttribute("href", root);
     var titleLink = document.querySelector(".md-header__title a");
     if (titleLink) titleLink.setAttribute("href", root);
+    makeHeaderTitleLinkToHome(root);
   } catch (e) {}
 
   /* 下载插件页 / 安装教程页 / 使用教程页：标记 body，用于 CSS 布局与排版 */
@@ -293,6 +318,18 @@ document.addEventListener("DOMContentLoaded", function() {
     document$.subscribe(loadVersionFromGitHub);
     document$.subscribe(bindIndexDownloadBtn);
     document$.subscribe(function() { setTimeout(function() { injectHeaderTabs(); injectHeaderTabsStyle(); }, 80); });
+    document$.subscribe(function() {
+      setTimeout(function() {
+        var path = (window.location.pathname || "").replace(/^\//, "").split("/").filter(Boolean);
+        var depth = Math.max(0, path.length - 1);
+        var root = depth === 0 ? "." : Array(depth).fill("..").join("/");
+        var logo = document.querySelector(".md-header__button.md-logo");
+        if (logo && logo.tagName === "A") logo.setAttribute("href", root);
+        var titleLink = document.querySelector(".md-header__title a");
+        if (titleLink) titleLink.setAttribute("href", root);
+        makeHeaderTitleLinkToHome(root);
+      }, 80);
+    });
     document$.subscribe(function() { setTimeout(wrapHeaderLeftShift, 80); });
     document$.subscribe(function() { setTimeout(wrapHeaderRightShift, 80); });
     document$.subscribe(function() {
