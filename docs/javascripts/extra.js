@@ -241,6 +241,15 @@ function makeHeaderTitleLinkToHome(root) {
     root = depth === 0 ? "." : Array(depth).fill("..").join("/");
   }
   var titleBlock = document.querySelector(".md-header__title .md-header__ellipsis > .md-header__topic:first-child");
+  if (!titleBlock) {
+    var topics = document.querySelectorAll(".md-header__title .md-header__topic");
+    for (var i = 0; i < topics.length; i++) {
+      if (!topics[i].getAttribute("data-md-component")) {
+        titleBlock = topics[i];
+        break;
+      }
+    }
+  }
   if (!titleBlock) return;
   var existing = titleBlock.querySelector("a.pinhaotu-header-home-link");
   if (existing) {
