@@ -26,12 +26,14 @@
 
 ### 更新已有版本（重要）
 
-1. 下载好新版本的发布包后，在浏览器中打开 `chrome://extensions/` 或 `edge://extensions/`，找到 Pin好图，将旧版本**删除**。
-2. 解压新发布包，点击「加载已解压的扩展程序」，选择解压后的 **Extension** 文件夹重新安装即可。
+1. 解压新发布包，用其中的「Extension」文件夹覆盖原安装位置下的同名文件夹（或先删除旧 Extension，再放入新解压的 Extension 到同一路径）。
+2. 打开 `chrome://extensions/` 或 `edge://extensions/`，找到 Pin好图，点击扩展卡片上的「刷新」图标即可生效。
 
 <div class="pinhaotu-highlight-box">
 
-安装新版本后需重新填写 API key（密钥仅存本机，不会随扩展保留）。
+按上述方式更新时，已保存的 API key 会保留，无需重新输入。
+
+请勿先移除扩展再重新加载其他文件夹，否则会视为新扩展，已保存的密钥与设置会丢失。
 
 </div>
 
