@@ -257,38 +257,58 @@
     }, 150);
   }
 
+  function isIndexPage() {
+    var path = (window.location.pathname || "").replace(/^\//, "").replace(/\/$/, "");
+    var pathSegments = path.split("/").filter(Boolean);
+    return pathSegments.length === 0 || (
+      pathSegments.length === 1 && ["download", "install", "usage"].indexOf(pathSegments[0]) === -1
+    );
+  }
+
   function run() {
-    var scheme = document.body.getAttribute("data-md-color-scheme");
-    function runDay() {
-      initDayBg();
-      if (scheme === "default") setTimeout(reinitDayBg, 150);
-    }
-    function runNight() {
-      initNightBg();
-    }
-    if (scheme === "default") {
-      var base = getBase();
-      var nightSrc = base + "assets/images/night-bg.apng";
-      var probe = document.createElement("img");
-      probe.onload = function() {
-        nightBgWidth = Math.round(probe.naturalWidth * SCALE);
-        nightBgHeight = Math.round(probe.naturalHeight * SCALE);
-        runDay();
-        scheduleHeightUpdates();
-      };
-      probe.onerror = function() {
-        runDay();
-        scheduleHeightUpdates();
-      };
-      probe.src = nightSrc;
+    if (!isIndexPage()) {
+      var n = document.getElementById("pinhaotu-night-bg-wrap");
+      var d = document.getElementById("pinhaotu-day-bg-wrap");
+      if (n) n.remove();
+      if (d) {
+        var oldImg = d.querySelector("#pinhaotu-day-bg-img");
+        if (oldImg && oldImg.src && oldImg.src.indexOf("blob:") === 0) URL.revokeObjectURL(oldImg.src);
+        d.remove();
+      }
     } else {
-      runNight();
-      scheduleHeightUpdates();
+      var scheme = document.body.getAttribute("data-md-color-scheme");
+      function runDay() {
+        initDayBg();
+        if (scheme === "default") setTimeout(reinitDayBg, 150);
+      }
+      function runNight() {
+        initNightBg();
+      }
+      if (scheme === "default") {
+        var base = getBase();
+        var nightSrc = base + "assets/images/night-bg.apng";
+        var probe = document.createElement("img");
+        probe.onload = function() {
+          nightBgWidth = Math.round(probe.naturalWidth * SCALE);
+          nightBgHeight = Math.round(probe.naturalHeight * SCALE);
+          runDay();
+          scheduleHeightUpdates();
+        };
+        probe.onerror = function() {
+          runDay();
+          scheduleHeightUpdates();
+        };
+        probe.src = nightSrc;
+      } else {
+        runNight();
+        scheduleHeightUpdates();
+      }
     }
     window.addEventListener("resize", updateWrapHeight);
     window.addEventListener("pinhaotu-night-bg-update-height", updateWrapHeight);
     observeHeightChanges();
     var obs = new MutationObserver(function(mutations) {
+      if (!isIndexPage()) return;
       var s = document.body.getAttribute("data-md-color-scheme");
       if (s === "default") {
         setTimeout(reinitDayBg, 30);
@@ -306,6 +326,17 @@
     if (typeof document$ !== "undefined") {
       document$.subscribe(function() {
         setTimeout(function() {
+          if (!isIndexPage()) {
+            var n = document.getElementById("pinhaotu-night-bg-wrap");
+            var d = document.getElementById("pinhaotu-day-bg-wrap");
+            if (n) n.remove();
+            if (d) {
+              var oldImg = d.querySelector("#pinhaotu-day-bg-img");
+              if (oldImg && oldImg.src && oldImg.src.indexOf("blob:") === 0) URL.revokeObjectURL(oldImg.src);
+              d.remove();
+            }
+            return;
+          }
           var s = document.body.getAttribute("data-md-color-scheme");
           if (s === "default") reinitDayBg(); else reinitNightBg();
           scheduleHeightUpdates();
