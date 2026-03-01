@@ -196,16 +196,26 @@ function bindDownloadBtn(btn, hintId) {
     btn.style.pointerEvents = "none";
     var api = "https://api.github.com/repos/" + repo + "/releases/latest";
     var doFetch = function() {
-      fetch(api, { headers: { "Accept": "application/vnd.github.v3+json" } })
+      fetch(api, { cache: "no-store", headers: { "Accept": "application/vnd.github.v3+json" } })
         .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error(r.status)); })
         .then(function(data) {
           var assets = data.assets || [];
-          var url = assets.length > 0 ? assets[0].browser_download_url : null;
+          var url = null;
+          for (var i = 0; i < assets.length; i++) {
+            var name = (assets[i].name || "").toLowerCase();
+            if (name.indexOf("source code") >= 0) continue;
+            if (name.indexOf("pinhaotu") >= 0 && name.indexOf(".zip") >= 0) {
+              url = assets[i].browser_download_url;
+              break;
+            }
+          }
+          if (!url && assets.length > 0) url = assets[0].browser_download_url;
           if (url) {
             var a = document.createElement("a");
-            a.href = url;
+            a.href = url + (url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now();
             a.target = "_blank";
             a.rel = "noopener";
+            a.download = "";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
